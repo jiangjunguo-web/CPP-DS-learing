@@ -205,13 +205,54 @@ public:
 		_size += len;
 	}
 
+	void resize(size_t n, const char& ch = 0) {
+		if(n > _capacity)
+			reserve(n);
+		if(n > _size) 
+			memset(_str + _size, ch, n - _size);
+		_size = n;
+		_str[_size] = 0;
+	}
+
+	void erase(size_t pos, size_t len) {
+		int i;
+		if(pos < _size) {
+			if(pos + len >= _size) {
+				_size = pos;
+				_str[_size] = 0;
+			}
+			else {
+				for(i = pos + len; i <= _size; ++i) 
+					_str[pos++] = _str[i];
+				_size -= len;
+			}
+		}
+	}
+
+	void popBack() {
+		erase(_size -1, 1);	
+	}
+
+	size_t find(const char* str) {
+		char* ptr = strstr(_str, str);
+		if(ptr)
+			return ptr - _str;
+		else 
+			return npos;
+	}
+	
 
 private:
 	char* _str;
 	size_t _size;
 	size_t _capacity;
-};
 
+public: 
+	static const size_t npos;
+};
+  
+//静态变量赋值
+const size_t String::npos = -1;
 
 //打印String
 void printString(const String& s) {
@@ -255,7 +296,18 @@ void test3() {
 	printString(str);
 }
 
+void test4() {
+	String str("this is a size test");
+	printString(str);
+	str.erase(10, 4);
+	printString(str);
+	str.popBack();
+	printString(str);
+	size_t pos = str.find("a");
+	cout << pos << endl;
+}
+
 int main() {
-	test();
+	test4();
 	return 0;
 }
